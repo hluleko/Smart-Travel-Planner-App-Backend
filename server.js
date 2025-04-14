@@ -84,6 +84,53 @@ async function initializeDatabase() {
 async function initializeTripTable() {
   try {
     const createTableQuery = `
+      CREATE TABLE IF NOT EXISTS trips (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        destination VARCHAR(255) NOT NULL,
+        start_date DATE NOT NULL,
+        end_date DATE NOT NULL,
+        budget DECIMAL(10,2) NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `;
+    const connection = await db.getConnection();
+    await connection.query(createTableQuery);
+    connection.release();
+    console.log("Trips table checked/created.");
+  } catch (error) {
+    console.error("Trip table initialization failed:", error.message);
+    process.exit(1);
+  }
+}
+
+async function initializeReviewTable() {
+  try {
+    const createTableQuery = `
+      CREATE TABLE IF NOT EXISTS reviews (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        destination VARCHAR(255) NOT NULL,
+        rating INT CHECK (rating >= 1 AND rating <= 5),
+        comment TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+    `;
+    const connection = await db.getConnection();
+    await connection.query(createTableQuery);
+    connection.release();
+    console.log("Reviews table checked/created.");
+  } catch (error) {
+    console.error("Review table initialization failed:", error.message);
+    process.exit(1);
+  }
+}
+
+
+async function initializeTripTable() {
+  try {
+    const createTableQuery = `
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         destination_id VARCHAR(222) NOT NULL,
@@ -108,6 +155,9 @@ async function initializeTripTable() {
 //Run DB checks
 testDBConnection();
 initializeDatabase();
+initializeTripTable();
+initializeReviewTable();
+
 
 //Register User
 app.post("/register", async (req, res) => {
