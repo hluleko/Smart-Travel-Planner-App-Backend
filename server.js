@@ -31,6 +31,28 @@ async function testDBConnection() {
     process.exit(1); // Stop server if DB connection fails
   }
 }
+//
+const db = mysql.createPool({
+  connectionLimit: 10,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  queueLimit: 0,
+});
+
+// Check database connection
+async function testDBConnection() {
+  try {
+    const connection = await db.getConnection();
+    console.log(" Database connected successfully!");
+    connection.release();
+  } catch (error) {
+    console.error("Database connection failed:", error.message);
+    process.exit(1); // Stop server if DB connection fails
+  }
+}
 
 //Ensure `users` table exists
 async function initializeDatabase() {
@@ -46,6 +68,28 @@ async function initializeDatabase() {
         dietary_restrictions VARCHAR(255) DEFAULT NULL,
         accessibility_needs VARCHAR(255) DEFAULT NULL,
         language_preferences VARCHAR(255) DEFAULT NULL
+      );
+    `;
+    const connection = await db.getConnection();
+    await connection.query(createTableQuery);
+    connection.release();
+    console.log("Users table checked/created.");
+  } catch (error) {
+    console.error("Database initialization failed:", error.message);
+    process.exit(1);
+  }
+}
+
+async function initializeTripTable() {
+  try {
+    const createTableQuery = `
+      CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        destination 
+        start_date DATE NOT NULL,
+        end_date DATE  NOT NULL,
+        bugdet (DECIMAL) NOT NULL
+       
       );
     `;
     const connection = await db.getConnection();
