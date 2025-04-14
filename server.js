@@ -24,38 +24,15 @@ const db = mysql.createPool({
 async function testDBConnection() {
   try {
     const connection = await db.getConnection();
-    console.log(" Database connected successfully!");
+    console.log("Database connected successfully!");
     connection.release();
   } catch (error) {
     console.error("Database connection failed:", error.message);
-    process.exit(1); // Stop server if DB connection fails
+    process.exit(1);
   }
 }
 
-//Database Connection(Trip Table)
-const db = mysql.createPool({
-  connectionLimit: 10,
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  waitForConnections: true,
-  queueLimit: 0,
-});
-
-// Check database connection
-async function testDBConnection() {
-  try {
-    const connection = await db.getConnection();
-    console.log(" Database connected successfully!");
-    connection.release();
-  } catch (error) {
-    console.error("Database connection failed:", error.message);
-    process.exit(1); // Stop server if DB connection fails
-  }
-}
-
-//Ensure `users` table exists
+// Ensure `users` table exists
 async function initializeDatabase() {
   try {
     const createTableQuery = `
@@ -127,39 +104,13 @@ async function initializeReviewTable() {
   }
 }
 
-
-async function initializeTripTable() {
-  try {
-    const createTableQuery = `
-      CREATE TABLE IF NOT EXISTS users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        destination_id VARCHAR(222) NOT NULL,
-        start_date DATE NOT NULL,
-        end_date DATE  NOT NULL,
-        bugdet (DECIMAL) NOT NULL
-       
-      );
-    `;
-    const connection = await db.getConnection();
-    await connection.query(createTableQuery);
-    connection.release();
-    console.log("Users table checked/created.");
-  } catch (error) {
-    console.error("Database initialization failed:", error.message);
-    process.exit(1);
-  }
-}
-
-
-
-//Run DB checks
+// Run DB checks
 testDBConnection();
 initializeDatabase();
 initializeTripTable();
 initializeReviewTable();
 
-
-//Register User
+// Register User
 app.post("/register", async (req, res) => {
   try {
     const { username, email, password, destination, budget, dietary_restrictions, accessibility_needs, language_preferences } = req.body;
@@ -186,7 +137,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
-//Login User
+// Login User
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -212,7 +163,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-//Get User Profile
+// Get User Profile
 app.get("/profile", async (req, res) => {
   try {
     const token = req.headers.authorization;
@@ -237,7 +188,7 @@ app.get("/profile", async (req, res) => {
   }
 });
 
-//Update User Profile
+// Update User Profile
 app.put("/profile", async (req, res) => {
   try {
     const token = req.headers.authorization;
@@ -265,7 +216,7 @@ app.put("/profile", async (req, res) => {
   }
 });
 
-//Delete User Profile
+// Delete User Profile
 app.delete("/profile", async (req, res) => {
   try {
     const token = req.headers.authorization;
@@ -285,6 +236,6 @@ app.delete("/profile", async (req, res) => {
   }
 });
 
-//Start Server
+// Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
