@@ -31,7 +31,8 @@ async function testDBConnection() {
     process.exit(1); // Stop server if DB connection fails
   }
 }
-//
+
+//Database Connection(Trip Table)
 const db = mysql.createPool({
   connectionLimit: 10,
   host: process.env.DB_HOST,
@@ -85,7 +86,7 @@ async function initializeTripTable() {
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        destination 
+        destination_id VARCHAR(222) NOT NULL,
         start_date DATE NOT NULL,
         end_date DATE  NOT NULL,
         bugdet (DECIMAL) NOT NULL
@@ -101,6 +102,8 @@ async function initializeTripTable() {
     process.exit(1);
   }
 }
+
+
 
 //Run DB checks
 testDBConnection();
