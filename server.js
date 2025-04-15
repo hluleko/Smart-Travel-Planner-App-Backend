@@ -235,6 +235,73 @@ app.delete("/profile", async (req, res) => {
     res.status(500).json({ error: "Failed to delete profile." });
   }
 });
+app.post("/trip", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { destination, start_date, end_date, budget } = req.body;
+
+    if (!destination || !start_date || !end_date || !budget) {
+      return res.status(400).json({ error: "Missing required fields." });
+    }
+
+    const query = `
+      INSERT INTO trips (user_id, destination, start_date, end_date, budget)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    const values = [userId, destination, start_date, end_date, budget];
+
+    const connection = await db.getConnection();
+    await connection.query(query, values);
+    connection.release();
+
+    res.status(201).json({ message: "Trip created successfully!" });
+  } catch (error) {
+    console.error("Trip creation error:", error.message);
+    res.status(500).json({ error: "Failed to create trip." });
+  }
+});
+app.get("/trip/:id", authenticateToken, async (req, res) => {
+  try {
+    const tripId = req.params.id;
+
+    const connection = await db.getConnection();
+    const [trips] = await connection.query("SELECT * FROM trips WHERE id = ?", [tripId]);
+    connection.release();
+
+    if (trips.length === 0) return res.status(404).json({ error: "Trip not found." });
+
+    res.json(trips[0]);
+  } catch (error) {
+    console.error("Fetch trip error:", error.message);
+    res.status(500).json({ error: "Failed to fetch trip." });
+  }
+});
+app.post("/review", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { destination, rating, comment } = req.body;
+
+    if (!destination || !rating || rating < 1 || rating > 5) {
+      return res.status(400).json({ error: "Invalid review data." });
+    }
+
+    const query = `
+      INSERT INTO reviews (user_id, destination, rating, comment)
+      VALUES (?, ?, ?, ?)
+    `;
+    const values = [userId, destination, rating, comment];
+
+    const connection = await db.getConnection();
+    await connection.query(query, values);
+    connection.release();
+
+    res.status(201).json({ message: "Review submitted successfully!" });
+  } catch (error) {
+    console.error("Review submission error:", error.message);
+    res.status(500).json({ error: "Failed to submit review." });
+  }
+});
+
 
 // Start Server
 const PORT = process.env.PORT || 5000;
