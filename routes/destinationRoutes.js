@@ -1,3 +1,4 @@
+//destinationRoutes.js
 const express = require("express");
 const router = express.Router();
 
@@ -7,7 +8,7 @@ module.exports = (db) => {
     const { user_id, name, location, description } = req.body;
 
     if (!user_id || !name || !location) {
-      return res.status(400).json({ error: "Missing required fields." });
+      return res.status(400).json({ error: "Missing required fields for destination." });
     }
 
     try {

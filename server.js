@@ -32,16 +32,6 @@ db.query(`
   )
 `);
 db.query(`
-  CREATE TABLE IF NOT EXISTS profile (
-    user_id INT PRIMARY KEY,
-    full_name VARCHAR(255),
-    date_of_birth DATE,
-    nationality VARCHAR(100),
-    preferences TEXT,
-    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
-  )
-`);
-db.query(`
   CREATE TABLE IF NOT EXISTS trip (
     trip_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,

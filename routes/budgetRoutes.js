@@ -1,3 +1,4 @@
+//budgetRoutes.js
 const express = require("express");
 const router = express.Router();
 
@@ -7,7 +8,7 @@ module.exports = (db) => {
     const { trip_id, min_amount, max_amount } = req.body;
 
     if (!trip_id || min_amount === undefined || max_amount === undefined) {
-      return res.status(400).json({ error: "Missing required fields." });
+      return res.status(400).json({ error: "Missing required fields for budget." });
     }
 
     try {
