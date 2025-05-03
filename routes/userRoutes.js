@@ -66,7 +66,11 @@ module.exports = (db) => {
         }
     
         const token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-        res.json({ token });
+        //Return both token and user_id
+        res.json({
+            token,
+            user_id: user.user_id,
+        });
         } catch (error) {
         console.error("Login error:", error.message);
         res.status(500).json({ error: "Login failed. Please try again later." });
