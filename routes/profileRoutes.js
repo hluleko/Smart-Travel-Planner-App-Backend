@@ -8,12 +8,12 @@ module.exports = (db) => {
 
     try {
       const [users] = await db.promise().query(
-        "SELECT user_id, username, email, language_preferences, created_at FROM user WHERE user_id = ? AND deleted_at IS NULL",
+        "SELECT user_id, username, email, language_preferences, created_at FROM user WHERE user_id = ?",
         [id]
       );
 
       if (users.length === 0) {
-        return res.status(404).json({ error: "User not found or deleted." });
+        return res.status(404).json({ error: "User not found." });
       }
 
       res.json(users[0]);
@@ -32,12 +32,12 @@ module.exports = (db) => {
       const [result] = await db.promise().query(
         `UPDATE user 
          SET username = ?, email = ?, language_preferences = ? 
-         WHERE user_id = ? AND deleted_at IS NULL`,
+         WHERE user_id = ?`,
         [username, email, language_preferences, id]
       );
 
       if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "User not found or already deleted." });
+        return res.status(404).json({ error: "User not found." });
       }
 
       res.json({ message: "Profile updated successfully." });
@@ -47,18 +47,18 @@ module.exports = (db) => {
     }
   });
 
-  // Soft Delete User
+  // Delete User (Soft delete removed)
   router.delete("/:id", async (req, res) => {
     const { id } = req.params;
 
     try {
       const [result] = await db.promise().query(
-        "UPDATE user SET deleted_at = NOW() WHERE user_id = ? AND deleted_at IS NULL",
+        "DELETE FROM user WHERE user_id = ?",
         [id]
       );
 
       if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "User not found or already deleted." });
+        return res.status(404).json({ error: "User not found." });
       }
 
       res.json({ message: "User deleted successfully." });
