@@ -82,6 +82,17 @@ db.query(`
     number_of_users_deleted INT DEFAULT 0
   )
 `);
+db.query(`
+    CREATE TABLE IF NOT EXISTS alert (
+      alert_id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      type ENUM('info', 'warning', 'error') NOT NULL,
+      message TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      seen BOOLEAN DEFAULT FALSE,
+      FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
+    );
+`);
 
 // Routes
 const userRoutes = require("./routes/userRoutes")(db);
@@ -98,6 +109,9 @@ const reviewRoutes = require("./routes/reviewRoutes");
 app.use("/api/reviews", reviewRoutes(db));
 const adminRoutes = require("./routes/adminRoutes");
 app.use("/api/admin", adminRoutes(db));
+const alertRoutes = require("./routes/alertRoutes");
+app.use("/api/alerts", alertRoutes(db));
+
 
 // Test DB connection route
 app.get("/api/ping-db", (req, res) => {

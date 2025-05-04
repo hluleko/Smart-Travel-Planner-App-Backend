@@ -24,7 +24,7 @@ module.exports = (db) => {
             if (err) {
               console.error("Error inserting admin row:", err.message);
             } else {
-              console.log("✅ Initial row inserted into admin table.");
+              console.log("Initial row inserted into admin table.");
             }
           });
         }
