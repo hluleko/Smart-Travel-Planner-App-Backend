@@ -7,7 +7,7 @@ module.exports = (db) => {
   router.post("/", async (req, res) => {
     const { user_id, destination_id, number_of_people, start_date, end_date } = req.body;
 
-    if (!user_id || !destination_id || !number_of_people || !start_date || !end_date) {
+    if (!user_id || !number_of_people || !start_date || !end_date) {
       return res.status(400).json({ error: "Missing required fields for trip." });
     }
 
