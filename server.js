@@ -53,7 +53,7 @@ db.query(`
     address VARCHAR(500) NOT NULL,
     rating DECIMAL(2,1),
     photo_url VARCHAR(1000),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
   )
 `);
 db.query(`
