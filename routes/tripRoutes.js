@@ -70,36 +70,43 @@ module.exports = (db) => {
     }
   });
 
-  // Update a trip
-  router.put("/:tripId", async (req, res) => {
-    const { tripId } = req.params;
-    const { number_of_people, start_date, end_date, trip_completed } = req.body;
-
-    try {
-      const updateQuery = `
-        UPDATE trip 
-        SET number_of_people = ?, start_date = ?, end_date = ?, trip_completed = ?, starting_point = ?, destination_id = ?
-        WHERE trip_id = ?
-      `;
-
-      const [result] = await db.promise().query(updateQuery, [
-        number_of_people,
-        start_date,
-        end_date,
-        trip_completed,
-        tripId,
-      ]);
-
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "Trip not found." });
-      }
-
-      res.json({ message: "Trip updated successfully." });
-    } catch (error) {
-      console.error("Update trip error:", error.message);
-      res.status(500).json({ error: "Failed to update trip." });
-    }
-  });
+    // Update a trip
+    router.put("/:tripId", async (req, res) => {
+        const { tripId } = req.params;
+        const { number_of_people, start_date, end_date, trip_completed, destination_id } = req.body;
+    
+        // Check if destination_id is provided (it should be when updating after destination creation)
+        if (destination_id == null) {
+        return res.status(400).json({ error: "Missing destination_id for trip update." });
+        }
+    
+        try {
+        const updateQuery = `
+            UPDATE trip 
+            SET number_of_people = ?, start_date = ?, end_date = ?, trip_completed = ?, destination_id = ?
+            WHERE trip_id = ?
+        `;
+    
+        const [result] = await db.promise().query(updateQuery, [
+            number_of_people,
+            start_date,
+            end_date,
+            trip_completed,
+            destination_id,  // Correctly pass destination_id here
+            tripId,
+        ]);
+    
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Trip not found." });
+        }
+    
+        res.json({ message: "Trip updated successfully." });
+        } catch (error) {
+        console.error("Update trip error:", error.message);
+        res.status(500).json({ error: "Failed to update trip." });
+        }
+    });
+  
 
   // Delete a trip
   router.delete("/:tripId", async (req, res) => {
