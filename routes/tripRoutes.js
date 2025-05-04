@@ -3,34 +3,43 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (db) => {
-  // Create a new trip
-  router.post("/", async (req, res) => {
-    const { user_id, destination_id, number_of_people, start_date, end_date } = req.body;
-
-    if (!user_id || !number_of_people || !start_date || !end_date) {
-      return res.status(400).json({ error: "Missing required fields for trip." });
-    }
-
-    try {
-      const insertQuery = `
-        INSERT INTO trip (user_id, destination_id, number_of_people, start_date, end_date, starting_point)
-        VALUES (?, ?, ?, ?, ?)
-      `;
-
-      await db.promise().query(insertQuery, [
+    // Create a new trip
+    router.post("/", async (req, res) => {
+        const {
         user_id,
         destination_id,
         number_of_people,
         start_date,
         end_date,
-      ]);
-
-      res.status(201).json({ message: "Trip created successfully." });
-    } catch (error) {
-      console.error("Create trip error:", error.message);
-      res.status(500).json({ error: "Failed to create trip." });
-    }
-  });
+        starting_point, 
+        } = req.body;
+    
+        if (!user_id || !number_of_people || !start_date || !end_date || !starting_point) {
+        return res.status(400).json({ error: "Missing required fields for trip." });
+        }
+    
+        try {
+        const insertQuery = `
+            INSERT INTO trip (user_id, destination_id, number_of_people, start_date, end_date, starting_point)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `;
+    
+        await db.promise().query(insertQuery, [
+            user_id,
+            destination_id,
+            number_of_people,
+            start_date,
+            end_date,
+            starting_point, 
+        ]);
+    
+        res.status(201).json({ message: "Trip created successfully." });
+        } catch (error) {
+        console.error("Create trip error:", error.message);
+        res.status(500).json({ error: "Failed to create trip." });
+        }
+    });
+  
 
   // Get all trips for a specific user
   router.get("/user/:userId", async (req, res) => {
