@@ -11,7 +11,7 @@ module.exports = (db) => {
         number_of_people,
         start_date,
         end_date,
-        starting_point, 
+        starting_point,
         } = req.body;
     
         if (!user_id || !number_of_people || !start_date || !end_date || !starting_point) {
@@ -24,21 +24,27 @@ module.exports = (db) => {
             VALUES (?, ?, ?, ?, ?, ?)
         `;
     
-        await db.promise().query(insertQuery, [
+        const [result] = await db.promise().query(insertQuery, [
             user_id,
             destination_id,
             number_of_people,
             start_date,
             end_date,
-            starting_point, 
+            starting_point,
         ]);
     
-        res.status(201).json({ message: "Trip created successfully." });
+        const trip_id = result.insertId; // Get the trip_id of the newly inserted trip
+    
+        res.status(201).json({
+            message: "Trip created successfully.",
+            trip_id, // Return the trip_id to the frontend
+        });
         } catch (error) {
         console.error("Create trip error:", error.message);
         res.status(500).json({ error: "Failed to create trip." });
         }
     });
+    
   
 
   // Get all trips for a specific user

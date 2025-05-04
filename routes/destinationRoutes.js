@@ -2,28 +2,40 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (db) => {
-  // Create a new destination
-  router.post("/", async (req, res) => {
-    const { user_id, location, address, rating, photo_url } = req.body;
-
-    if (!user_id || !location || !address) {
-      return res.status(400).json({ error: "Missing required fields: user_id, location, or address." });
-    }
-
-    try {
-      const insertQuery = `
-        INSERT INTO destination (user_id, location, address, rating, photo_url)
-        VALUES (?, ?, ?, ?, ?)
-      `;
-
-      await db.promise().query(insertQuery, [user_id, location, address, rating || null, photo_url || null]);
-
-      res.status(201).json({ message: "Destination added successfully." });
-    } catch (error) {
-      console.error("Create destination error:", error.message);
-      res.status(500).json({ error: "Failed to create destination." });
-    }
-  });
+    // Create a new destination
+    router.post("/", async (req, res) => {
+        const { user_id, location, address, rating, photo_url } = req.body;
+    
+        if (!user_id || !location || !address) {
+        return res.status(400).json({ error: "Missing required fields: user_id, location, or address." });
+        }
+    
+        try {
+        const insertQuery = `
+            INSERT INTO destination (user_id, location, address, rating, photo_url)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+    
+        const [result] = await db.promise().query(insertQuery, [
+            user_id,
+            location,
+            address,
+            rating || null,
+            photo_url || null,
+        ]);
+    
+        const destination_id = result.insertId;
+    
+        res.status(201).json({
+            message: "Destination added successfully.",
+            destination_id, // <-- return this to frontend
+        });
+        } catch (error) {
+        console.error("Create destination error:", error.message);
+        res.status(500).json({ error: "Failed to create destination." });
+        }
+    });
+    
 
   // Get all destinations for a user
   router.get("/user/:userId", async (req, res) => {
