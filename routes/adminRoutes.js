@@ -2,13 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (db) => {
-  // Get admin stats: number of users registered and deleted
+  // Protected route - GET stats
   router.get("/stats", async (req, res) => {
+    // Token verification should happen via middleware (not shown here)
     try {
       const [stats] = await db.promise().query(`
-        SELECT
-          (SELECT COUNT(*) FROM user WHERE deleted_at IS NULL) AS number_of_users_registered,
-          (SELECT COUNT(*) FROM user WHERE deleted_at IS NOT NULL) AS number_of_users_deleted
+        SELECT number_of_users_registered, number_of_users_deleted FROM admin LIMIT 1
       `);
 
       res.json(stats[0]);
@@ -18,27 +17,28 @@ module.exports = (db) => {
     }
   });
 
-  // Log admin activity (e.g., user account creation or deletion)
+  // Public route - increment counts for user creation/deletion
   router.post("/activity", async (req, res) => {
-    const { user_id, type } = req.body;
+    const { type } = req.body;
 
-    // Validate the activity type
     if (type !== "account_created" && type !== "account_deleted") {
       return res.status(400).json({ error: "Invalid activity type." });
     }
 
-    try {
-      const insertQuery = `
-        INSERT INTO admin_activity (user_id, type)
-        VALUES (?, ?)
-      `;
-      
-      await db.promise().query(insertQuery, [user_id, type]);
+    const column =
+      type === "account_created"
+        ? "number_of_users_registered"
+        : "number_of_users_deleted";
 
-      res.status(201).json({ message: "Activity logged successfully." });
+    try {
+      await db.promise().query(`
+        UPDATE admin SET ${column} = ${column} + 1
+      `);
+
+      res.status(200).json({ message: "Admin count updated." });
     } catch (error) {
-      console.error("Log admin activity error:", error.message);
-      res.status(500).json({ error: "Failed to log activity." });
+      console.error("Admin count update error:", error.message);
+      res.status(500).json({ error: "Failed to update admin count." });
     }
   });
 
