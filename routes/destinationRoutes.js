@@ -1,23 +1,22 @@
-//destinationRoutes.js
 const express = require("express");
 const router = express.Router();
 
 module.exports = (db) => {
   // Create a new destination
   router.post("/", async (req, res) => {
-    const { user_id, name, location, description } = req.body;
+    const { user_id, location, address, rating, photo_url } = req.body;
 
-    if (!user_id || !name || !location) {
-      return res.status(400).json({ error: "Missing required fields for destination." });
+    if (!user_id || !location || !address) {
+      return res.status(400).json({ error: "Missing required fields: user_id, location, or address." });
     }
 
     try {
       const insertQuery = `
-        INSERT INTO destination (user_id, name, location, description)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO destination (user_id, location, address, rating, photo_url)
+        VALUES (?, ?, ?, ?, ?)
       `;
 
-      await db.promise().query(insertQuery, [user_id, name, location, description]);
+      await db.promise().query(insertQuery, [user_id, location, address, rating || null, photo_url || null]);
 
       res.status(201).json({ message: "Destination added successfully." });
     } catch (error) {
@@ -61,36 +60,6 @@ module.exports = (db) => {
     } catch (error) {
       console.error("Get destination error:", error.message);
       res.status(500).json({ error: "Failed to retrieve destination." });
-    }
-  });
-
-  // Update a destination
-  router.put("/:destinationId", async (req, res) => {
-    const { destinationId } = req.params;
-    const { name, location, description } = req.body;
-
-    try {
-      const updateQuery = `
-        UPDATE destination
-        SET name = ?, location = ?, description = ?
-        WHERE destination_id = ?
-      `;
-
-      const [result] = await db.promise().query(updateQuery, [
-        name,
-        location,
-        description,
-        destinationId,
-      ]);
-
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "Destination not found." });
-      }
-
-      res.json({ message: "Destination updated successfully." });
-    } catch (error) {
-      console.error("Update destination error:", error.message);
-      res.status(500).json({ error: "Failed to update destination." });
     }
   });
 

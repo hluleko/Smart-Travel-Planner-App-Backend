@@ -13,7 +13,7 @@ module.exports = (db) => {
 
     try {
       const insertQuery = `
-        INSERT INTO trip (user_id, destination_id, number_of_people, start_date, end_date)
+        INSERT INTO trip (user_id, destination_id, number_of_people, start_date, end_date, starting_point)
         VALUES (?, ?, ?, ?, ?)
       `;
 
@@ -78,7 +78,7 @@ module.exports = (db) => {
     try {
       const updateQuery = `
         UPDATE trip 
-        SET number_of_people = ?, start_date = ?, end_date = ?, trip_completed = ?
+        SET number_of_people = ?, start_date = ?, end_date = ?, trip_completed = ?, starting_point = ?, destination_id = ?
         WHERE trip_id = ?
       `;
 

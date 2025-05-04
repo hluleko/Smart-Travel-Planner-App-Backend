@@ -35,30 +35,33 @@ db.query(`
   CREATE TABLE IF NOT EXISTS trip (
     trip_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
+    destination_id INT,
     title VARCHAR(255),
     start_date DATE,
     end_date DATE,
     description TEXT,
+    starting_point VARCHAR(255),
+    number_of_people INT,
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
   )
 `);
 db.query(`
   CREATE TABLE IF NOT EXISTS destination (
     destination_id INT AUTO_INCREMENT PRIMARY KEY,
-    trip_id INT,
-    name VARCHAR(255),
-    country VARCHAR(100),
-    arrival_date DATE,
-    departure_date DATE,
-    FOREIGN KEY (trip_id) REFERENCES trip(trip_id) ON DELETE CASCADE
+    user_id INT NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    address VARCHAR(500) NOT NULL,
+    rating DECIMAL(2,1),
+    photo_url VARCHAR(1000),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   )
 `);
 db.query(`
   CREATE TABLE IF NOT EXISTS budget (
     budget_id INT AUTO_INCREMENT PRIMARY KEY,
-    trip_id INT,
-    category VARCHAR(100),
-    amount DECIMAL(10,2),
+    trip_id INT NOT NULL,
+    min_amount DECIMAL(10,2) NOT NULL,
+    max_amount DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (trip_id) REFERENCES trip(trip_id) ON DELETE CASCADE
   )
 `);
