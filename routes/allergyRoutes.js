@@ -4,17 +4,28 @@ const router = express.Router();
 module.exports = (db) => {
   // Add an allergy
   router.post("/", async (req, res) => {
-    const { user_id, name } = req.body;
+    const { user_id, name, severity } = req.body;
 
-    if (!user_id || !name) {
-      return res.status(400).json({ error: "user_id and name are required." });
+    if (!user_id || !name || !severity) {
+      return res
+        .status(400)
+        .json({ error: "user_id, name, and severity are required." });
+    }
+
+    const allowedSeverities = ["Low", "Moderate", "High"];
+    if (!allowedSeverities.includes(severity)) {
+      return res
+        .status(400)
+        .json({ error: "Severity must be one of: Low, Moderate, or High." });
     }
 
     try {
-      await db.promise().query(
-        "INSERT INTO allergy (user_id, name) VALUES (?, ?)",
-        [user_id, name]
-      );
+      await db
+        .promise()
+        .query(
+          "INSERT INTO allergy (user_id, name, severity, added_at) VALUES (?, ?, ?, NOW())",
+          [user_id, name, severity]
+        );
       res.status(201).json({ message: "Allergy added successfully." });
     } catch (error) {
       if (error.code === "ER_DUP_ENTRY") {
@@ -33,7 +44,10 @@ module.exports = (db) => {
     try {
       const [rows] = await db
         .promise()
-        .query("SELECT allergy_id, name FROM allergy WHERE user_id = ?", [user_id]);
+        .query(
+          "SELECT allergy_id, name, severity, added_at FROM allergy WHERE user_id = ? ORDER BY added_at DESC",
+          [user_id]
+        );
       res.json(rows);
     } catch (error) {
       console.error("Fetch allergies error:", error);
