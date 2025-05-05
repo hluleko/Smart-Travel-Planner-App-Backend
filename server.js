@@ -83,14 +83,13 @@ db.query(`
     );
 `);
 db.query(`
-    CREATE TABLE IF NOT EXISTS allergy (
-      allergy_id INT AUTO_INCREMENT PRIMARY KEY,
-      user_id INT NOT NULL,
-      name VARCHAR(100) NOT NULL,
-      UNIQUE(user_id, name),
-      FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
-    );
-  );
+  CREATE TABLE IF NOT EXISTS allergy (
+    allergy_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    UNIQUE(user_id, name),
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
+  )
 `);
 
 
