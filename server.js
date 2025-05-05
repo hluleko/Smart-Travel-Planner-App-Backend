@@ -27,7 +27,6 @@ db.query(`
     username VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    language_preferences TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )
 `);
@@ -66,16 +65,6 @@ db.query(`
   )
 `);
 db.query(`
-  CREATE TABLE IF NOT EXISTS review (
-    review_id INT AUTO_INCREMENT PRIMARY KEY,
-    trip_id INT,
-    rating INT CHECK (rating BETWEEN 1 AND 5),
-    comment TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (trip_id) REFERENCES trip(trip_id) ON DELETE CASCADE
-  )
-`);
-db.query(`
   CREATE TABLE IF NOT EXISTS admin (
     id INT AUTO_INCREMENT PRIMARY KEY,
     number_of_users_registered INT DEFAULT 0,
@@ -93,6 +82,17 @@ db.query(`
       FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
     );
 `);
+db.query(`
+    CREATE TABLE IF NOT EXISTS allergy (
+      allergy_id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      name VARCHAR(100) NOT NULL,
+      UNIQUE(user_id, name),
+      FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
+    );
+  );
+`);
+
 
 // Routes
 const userRoutes = require("./routes/userRoutes")(db);
@@ -105,12 +105,13 @@ const destinationRoutes = require("./routes/destinationRoutes");
 app.use("/api/destinations", destinationRoutes(db));
 const budgetRoutes = require("./routes/budgetRoutes");
 app.use("/api/budgets", budgetRoutes(db));
-const reviewRoutes = require("./routes/reviewRoutes");
-app.use("/api/reviews", reviewRoutes(db));
 const adminRoutes = require("./routes/adminRoutes");
 app.use("/api/admin", adminRoutes(db));
 const alertRoutes = require("./routes/alertRoutes");
 app.use("/api/alerts", alertRoutes(db));
+const allergyRoutes = require("./routes/allergyRoutes");
+app.use("/api/allergies", allergyRoutes(db));
+
 
 
 // Test DB connection route

@@ -8,7 +8,7 @@ module.exports = (db) => {
 
     try {
       const [users] = await db.promise().query(
-        "SELECT user_id, username, email, language_preferences, created_at FROM user WHERE user_id = ?",
+        "SELECT user_id, username, email, created_at FROM user WHERE user_id = ?",
         [id]
       );
 
@@ -26,14 +26,14 @@ module.exports = (db) => {
   // Update User Profile
   router.put("/:id", async (req, res) => {
     const { id } = req.params;
-    const { username, email, language_preferences } = req.body;
+    const { username, email } = req.body;
 
     try {
       const [result] = await db.promise().query(
         `UPDATE user 
-         SET username = ?, email = ?, language_preferences = ? 
+         SET username = ?, email = ? 
          WHERE user_id = ?`,
-        [username, email, language_preferences, id]
+        [username, email, id]
       );
 
       if (result.affectedRows === 0) {
@@ -47,7 +47,7 @@ module.exports = (db) => {
     }
   });
 
-  // Delete User (Soft delete removed)
+  // Delete User
   router.delete("/:id", async (req, res) => {
     const { id } = req.params;
 
