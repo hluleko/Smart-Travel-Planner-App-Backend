@@ -123,6 +123,14 @@ db.query(`
 });
 
 
+db.query("SELECT VERSION() AS version", (err, results) => {
+  if (err) {
+    console.error("Error fetching MySQL version:", err.message);
+  } else {
+    console.log("MySQL Server Version:", results[0].version);
+  }
+});
+
 
 
 // Routes
