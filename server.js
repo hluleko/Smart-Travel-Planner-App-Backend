@@ -24,7 +24,7 @@ const db = mysql.createPool({
 db.query(`
   CREATE TABLE IF NOT EXISTS user (
     user_id INT PRIMARY KEY,
-    user_role VARCHAR(255),
+    user_role VARCHAR(255) DEFAULT 'user',
     username VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,

@@ -8,13 +8,13 @@ module.exports = (db) => {
   router.post("/register", async (req, res) => {
     try {
       const { username, email, password } = req.body;
-
+  
       if (!username || !email || !password) {
         return res.status(400).json({ error: "Missing required fields." });
       }
-
+  
       const hashedPassword = await bcrypt.hash(password, 10);
-
+  
       // Find next available user_id (gapless)
       const [rows] = await db.promise().query(`
         SELECT t1.user_id + 1 AS next_id
@@ -24,27 +24,30 @@ module.exports = (db) => {
         ORDER BY t1.user_id
         LIMIT 1
       `);
-
+  
       const nextUserId = rows.length > 0 ? rows[0].next_id : 1;
-
+  
+      // Include user_role in the insert
       const insertQuery = `
-        INSERT INTO user (user_id, username, email, password)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO user (user_id, username, email, password, user_role)
+        VALUES (?, ?, ?, ?, ?)
       `;
-
+  
       await db.promise().query(insertQuery, [
         nextUserId,
         username,
         email,
         hashedPassword,
+        "user" // default role
       ]);
-
+  
       res.status(201).json({ message: "User registered successfully!" });
     } catch (error) {
       console.error("Registration error:", error.message);
       res.status(500).json({ error: "Registration failed." });
     }
   });
+  
 
   // Login User
   router.post("/login", async (req, res) => {
