@@ -20,7 +20,7 @@ const db = mysql.createPool({
   queueLimit: 0,
 });
 
-//Ensure all tables exist
+// Ensure all tables exist with error handling
 db.query(`
   CREATE TABLE IF NOT EXISTS user (
     user_id INT PRIMARY KEY,
@@ -30,7 +30,11 @@ db.query(`
     password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )
-`);
+`, (err) => {
+  if (err) console.error("Error creating user table:", err.message);
+  else console.log("User table checked/created.");
+});
+
 db.query(`
   CREATE TABLE IF NOT EXISTS trip (
     trip_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -44,7 +48,11 @@ db.query(`
     number_of_people INT,
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
   )
-`);
+`, (err) => {
+  if (err) console.error("Error creating trip table:", err.message);
+  else console.log("Trip table checked/created.");
+});
+
 db.query(`
   CREATE TABLE IF NOT EXISTS destination (
     destination_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -55,7 +63,11 @@ db.query(`
     photo_url VARCHAR(1000),
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
   )
-`);
+`, (err) => {
+  if (err) console.error("Error creating destination table:", err.message);
+  else console.log("Destination table checked/created.");
+});
+
 db.query(`
   CREATE TABLE IF NOT EXISTS budget (
     budget_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -65,30 +77,36 @@ db.query(`
     FOREIGN KEY (trip_id) REFERENCES trip(trip_id) ON DELETE CASCADE
   )
 `, (err) => {
-  if (err) {
-    console.error("Error creating budget table:", err.message);
-  } else {
-    console.log("Budget table checked/created.");
-  }
+  if (err) console.error("Error creating budget table:", err.message);
+  else console.log("Budget table checked/created.");
 });
+
 db.query(`
   CREATE TABLE IF NOT EXISTS admin (
     id INT AUTO_INCREMENT PRIMARY KEY,
     number_of_users_registered INT DEFAULT 0,
     number_of_users_deleted INT DEFAULT 0
   )
-`);
+`, (err) => {
+  if (err) console.error("Error creating admin table:", err.message);
+  else console.log("Admin table checked/created.");
+});
+
 db.query(`
-    CREATE TABLE IF NOT EXISTS alert (
-      alert_id INT AUTO_INCREMENT PRIMARY KEY,
-      user_id INT NOT NULL,
-      type ENUM('info', 'warning', 'error') NOT NULL,
-      message TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      seen BOOLEAN DEFAULT FALSE,
-      FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
-    );
-`);
+  CREATE TABLE IF NOT EXISTS alert (
+    alert_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    type ENUM('info', 'warning', 'error') NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    seen BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
+  )
+`, (err) => {
+  if (err) console.error("Error creating alert table:", err.message);
+  else console.log("Alert table checked/created.");
+});
+
 db.query(`
   CREATE TABLE IF NOT EXISTS allergy (
     allergy_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -99,7 +117,11 @@ db.query(`
     UNIQUE(user_id, name),
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
   )
-`);
+`, (err) => {
+  if (err) console.error("Error creating allergy table:", err.message);
+  else console.log("Allergy table checked/created.");
+});
+
 
 
 

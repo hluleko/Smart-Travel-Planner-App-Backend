@@ -3,12 +3,15 @@ const router = express.Router();
 
 module.exports = (db) => {
   // Get User Profile
+  // Get User Profile
   router.get("/:id", async (req, res) => {
     const { id } = req.params;
 
     try {
       const [users] = await db.promise().query(
-        "SELECT user_id, username, email, created_at FROM user WHERE user_id = ?",
+        `SELECT user_id, username, email, created_at, user_role 
+         FROM user 
+         WHERE user_id = ?`,
         [id]
       );
 
