@@ -64,7 +64,13 @@ db.query(`
     max_amount DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (trip_id) REFERENCES trip(trip_id) ON DELETE CASCADE
   )
-`);
+`, (err) => {
+  if (err) {
+    console.error("Error creating budget table:", err.message);
+  } else {
+    console.log("Budget table checked/created.");
+  }
+});
 db.query(`
   CREATE TABLE IF NOT EXISTS admin (
     id INT AUTO_INCREMENT PRIMARY KEY,
