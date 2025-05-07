@@ -24,6 +24,7 @@ const db = mysql.createPool({
 db.query(`
   CREATE TABLE IF NOT EXISTS user (
     user_id INT PRIMARY KEY,
+    user_role VARCHAR(255),
     username VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -113,7 +114,8 @@ const alertRoutes = require("./routes/alertRoutes");
 app.use("/api/alerts", alertRoutes(db));
 const allergyRoutes = require("./routes/allergyRoutes");
 app.use("/api/allergies", allergyRoutes(db));
-
+const exportRoutes = require("./routes/exportRoutes");
+app.use("/api", exportRoutes(db));
 
 
 // Test DB connection route
