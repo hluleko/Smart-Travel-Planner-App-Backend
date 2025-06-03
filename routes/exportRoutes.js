@@ -46,5 +46,24 @@ module.exports = function (db) {
     }
   });
 
+
+  router.get("/preview/:table", async (req, res) => {
+      const tableName = req.params.table;
+      const allowedTables = ['user', 'trip', 'destination', 'budget', 'admin', 'alert', 'allergy'];
+      if (!allowedTables.includes(tableName)) {
+        return res.status(400).json({ error: 'Invalid table name.' });
+      }
+
+      try {
+        db.query(`SELECT * FROM \`${tableName}\` LIMIT 10`, (err, results) => {
+          if (err) return res.status(500).json({ error: err.message });
+          res.json(results);
+        });
+      } catch (err) {
+        res.status(500).json({ error: err.message });
+      }
+    });
+
+
   return router;
 };
