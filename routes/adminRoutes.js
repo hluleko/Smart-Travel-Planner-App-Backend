@@ -69,5 +69,36 @@ module.exports = (db) => {
     }
   });
 
+  // Admin route - GET all users
+  router.get("/users", async (req, res) => {
+    try {
+      const [users] = await db.promise().query(`
+        SELECT user_id, username, email, user_role, created_at 
+        FROM users
+      `);
+      res.json(users);
+    } catch (error) {
+      console.error("Fetch all users error:", error.message);
+      res.status(500).json({ error: "Failed to retrieve users." });
+    }
+  });
+
+  // Admin route - GET all trips
+  router.get("/trips", async (req, res) => {
+    try {
+      const [trips] = await db.promise().query(`
+        SELECT t.*, u.username, u.email, d.location
+        FROM trips t
+        LEFT JOIN users u ON t.user_id = u.user_id
+        LEFT JOIN destinations d ON t.destination_id = d.destination_id
+        ORDER BY t.created_at DESC
+      `);
+      res.json(trips);
+    } catch (error) {
+      console.error("Fetch all trips error:", error.message);
+      res.status(500).json({ error: "Failed to retrieve trips." });
+    }
+  });
+
   return router;
 };
