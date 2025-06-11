@@ -91,7 +91,6 @@ module.exports = (db) => {
         FROM trip t
         LEFT JOIN user u ON t.user_id = u.user_id
         LEFT JOIN destination d ON t.destination_id = d.destination_id
-        ORDER BY t.created_at DESC
       `);
       res.json(trips);
     } catch (error) {
