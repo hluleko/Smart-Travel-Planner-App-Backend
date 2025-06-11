@@ -74,7 +74,7 @@ module.exports = (db) => {
     try {
       const [users] = await db.promise().query(`
         SELECT user_id, username, email, user_role, created_at 
-        FROM users
+        FROM user
       `);
       res.json(users);
     } catch (error) {
@@ -88,7 +88,7 @@ module.exports = (db) => {
     try {
       const [trips] = await db.promise().query(`
         SELECT t.*, u.username, u.email, d.location
-        FROM trips t
+        FROM trip t
         LEFT JOIN users u ON t.user_id = u.user_id
         LEFT JOIN destinations d ON t.destination_id = d.destination_id
         ORDER BY t.created_at DESC
