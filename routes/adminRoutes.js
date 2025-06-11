@@ -89,8 +89,8 @@ module.exports = (db) => {
       const [trips] = await db.promise().query(`
         SELECT t.*, u.username, u.email, d.location
         FROM trip t
-        LEFT JOIN users u ON t.user_id = u.user_id
-        LEFT JOIN destinations d ON t.destination_id = d.destination_id
+        LEFT JOIN user u ON t.user_id = u.user_id
+        LEFT JOIN destination d ON t.destination_id = d.destination_id
         ORDER BY t.created_at DESC
       `);
       res.json(trips);
