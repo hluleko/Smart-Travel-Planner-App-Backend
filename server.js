@@ -122,6 +122,22 @@ db.query(`
   else console.log("Allergy table checked/created.");
 });
 
+db.query(`
+  CREATE TABLE IF NOT EXISTS stop (
+    stop_id INT AUTO_INCREMENT PRIMARY KEY,
+    trip_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    address VARCHAR(500) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    photo_url VARCHAR(1000),
+    order_index INT NOT NULL,
+    FOREIGN KEY (trip_id) REFERENCES trip(trip_id) ON DELETE CASCADE
+  )
+`, (err) => {
+  if (err) console.error("Error creating stop table:", err.message);
+  else console.log("Stop table checked/created.");
+});
+
 
 db.query("SELECT VERSION() AS version", (err, results) => {
   if (err) {
@@ -152,6 +168,8 @@ const allergyRoutes = require("./routes/allergyRoutes");
 app.use("/api/allergies", allergyRoutes(db));
 const exportRoutes = require("./routes/exportRoutes");
 app.use("/api", exportRoutes(db));
+const stopRoutes = require("./routes/stopRoutes");
+app.use("/api/stops", stopRoutes(db));
 
 
 // Test DB connection route
