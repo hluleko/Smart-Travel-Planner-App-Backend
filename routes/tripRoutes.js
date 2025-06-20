@@ -83,12 +83,17 @@ module.exports = (db) => {
       console.error("Get trip error:", error.message);
       res.status(500).json({ error: "Failed to retrieve trip." });
     }
-  });
-
-    // Update a trip
+  });    // Update a trip
     router.put("/:tripId", async (req, res) => {
         const { tripId } = req.params;
-        const { number_of_people, start_date, end_date, trip_completed, destination_id } = req.body;
+        const { 
+          number_of_people, 
+          start_date, 
+          end_date, 
+          destination_id,
+          trip_started,
+          trip_ended 
+        } = req.body;
     
         // Check if destination_id is provided (it should be when updating after destination creation)
         if (destination_id == null) {
@@ -98,7 +103,8 @@ module.exports = (db) => {
         try {
         const updateQuery = `
             UPDATE trip 
-            SET number_of_people = ?, start_date = ?, end_date = ?, trip_completed = ?, destination_id = ?
+            SET number_of_people = ?, start_date = ?, end_date = ?, destination_id = ?,
+            trip_started = COALESCE(?, trip_started), trip_ended = COALESCE(?, trip_ended)
             WHERE trip_id = ?
         `;
     
@@ -106,8 +112,9 @@ module.exports = (db) => {
             number_of_people,
             start_date,
             end_date,
-            trip_completed,
-            destination_id,  // Correctly pass destination_id here
+            destination_id,
+            trip_started,
+            trip_ended,
             tripId,
         ]);
     

@@ -49,6 +49,8 @@ db.query(`
     description TEXT,
     starting_point VARCHAR(255),
     number_of_people INT,
+    trip_started BOOLEAN DEFAULT FALSE,
+    trip_ended BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE
   )
 `, (err) => {
@@ -72,16 +74,16 @@ db.query(`
 });
 
 db.query(`
-  CREATE TABLE IF NOT EXISTS budget (
-    budget_id INT AUTO_INCREMENT PRIMARY KEY,
+  CREATE TABLE IF NOT EXISTS cost (
+    cost_id INT AUTO_INCREMENT PRIMARY KEY,
     trip_id INT NOT NULL,
-    min_amount DECIMAL(10,2) NOT NULL,
-    max_amount DECIMAL(10,2) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    breakdown JSON,
     FOREIGN KEY (trip_id) REFERENCES trip(trip_id) ON DELETE CASCADE
   )
 `, (err) => {
-  if (err) console.error("Error creating budget table:", err.message);
-  else console.log("Budget table checked/created.");
+  if (err) console.error("Error creating cost table:", err.message);
+  else console.log("Cost table checked/created.");
 });
 
 db.query(`
@@ -161,8 +163,8 @@ const tripRoutes = require("./routes/tripRoutes");
 app.use("/api/trips", tripRoutes(db));
 const destinationRoutes = require("./routes/destinationRoutes");
 app.use("/api/destinations", destinationRoutes(db));
-const budgetRoutes = require("./routes/budgetRoutes");
-app.use("/api/budgets", budgetRoutes(db));
+const costRoutes = require("./routes/costRoutes");
+app.use("/api/costs", costRoutes(db));
 const adminRoutes = require("./routes/adminRoutes");
 app.use("/api/admin", adminRoutes(db));
 const alertRoutes = require("./routes/alertRoutes");
