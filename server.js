@@ -6,7 +6,10 @@ const mysql = require("mysql2");
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  exposedHeaders: ['Content-Disposition', 'Content-Type'],
+  origin: '*'
+}));
 app.use(express.json());
 
 // DB connection pool
