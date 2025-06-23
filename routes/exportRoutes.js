@@ -11,7 +11,7 @@ module.exports = function (db) {
     console.log(`Excel export requested for table: ${tableName}`);
 
     // Validate allowed tables
-    const allowedTables = ['user', 'trip', 'destination', 'budget', 'admin', 'alert', 'allergy', 'stop'];
+    const allowedTables = ['user', 'trip', 'destination', 'cost', 'admin', 'alert', 'stop'];
     if (!allowedTables.includes(tableName)) {
       return res.status(400).json({ error: 'Invalid table name.' });
     }
@@ -57,7 +57,7 @@ module.exports = function (db) {
     const tableName = req.params.table;
 
     // Validate allowed tables
-    const allowedTables = ['user', 'trip', 'destination', 'budget', 'admin', 'alert', 'allergy', 'stop'];
+    const allowedTables = ['user', 'trip', 'destination', 'cost', 'admin', 'alert', 'stop'];
     if (!allowedTables.includes(tableName)) {
       return res.status(400).json({ error: 'Invalid table name.' });
     }
@@ -138,7 +138,7 @@ module.exports = function (db) {
     const tableName = req.params.table;
 
     // Validate allowed tables
-    const allowedTables = ['user', 'trip', 'destination', 'budget', 'admin', 'alert', 'allergy', 'stop'];
+    const allowedTables = ['user', 'trip', 'destination', 'cost', 'admin', 'alert', 'stop'];
     if (!allowedTables.includes(tableName)) {
       return res.status(400).json({ error: 'Invalid table name.' });
     }
@@ -178,7 +178,7 @@ module.exports = function (db) {
   });
   router.get("/preview/:table", async (req, res) => {
     const tableName = req.params.table;
-    const allowedTables = ['user', 'trip', 'destination', 'budget', 'admin', 'alert', 'allergy', 'stop'];
+    const allowedTables = ['user', 'trip', 'destination', 'cost', 'admin', 'alert', 'stop'];
     if (!allowedTables.includes(tableName)) {
       return res.status(400).json({ error: 'Invalid table name.' });
     }
