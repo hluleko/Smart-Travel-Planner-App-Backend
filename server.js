@@ -111,7 +111,7 @@ db.query(`
   if (err) console.error("Error creating alert table:", err.message);
   else console.log("Alert table checked/created.");
 });
-
+/*
 db.query(`
   CREATE TABLE IF NOT EXISTS allergy (
     allergy_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -126,6 +126,7 @@ db.query(`
   if (err) console.error("Error creating allergy table:", err.message);
   else console.log("Allergy table checked/created.");
 });
+*/
 
 db.query(`
   CREATE TABLE IF NOT EXISTS stop (
@@ -169,8 +170,10 @@ const adminRoutes = require("./routes/adminRoutes");
 app.use("/api/admin", adminRoutes(db));
 const alertRoutes = require("./routes/alertRoutes");
 app.use("/api/alerts", alertRoutes(db));
+/*
 const allergyRoutes = require("./routes/allergyRoutes");
 app.use("/api/allergies", allergyRoutes(db));
+*/
 const exportRoutes = require("./routes/exportRoutes");
 app.use("/api", exportRoutes(db));
 const stopRoutes = require("./routes/stopRoutes");
